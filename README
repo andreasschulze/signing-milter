@@ -1,6 +1,10 @@
-20200819
+20200719
  bei einer ASCII-Mail den MIME-Version Header aus dem signierten Daten
  übernehmen
+
+20200719
+ Logging ohne Syslog implementiert: `signing-milter -l` schreibt nur noch nach
+ STDOUT
 
 Juli 2020
  Symptom: Outlook zeigt signierte Mails als verändert an.
