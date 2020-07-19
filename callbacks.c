@@ -364,7 +364,7 @@ sfsistat callback_body(SMFICTX* ctx, unsigned char* bodyp, size_t len) {
             start++;
             length--;
         }
-        logmsg(LOG_DEBUG, "%s: skipping %lu/%lu first bytes while copying body to signingbuffer", ctxdata->queueid, start - bodyp, len - length);
+        logmsg(LOG_DEBUG, "%s: skip %lu bytes RFC 2046 prolog discarded", ctxdata->queueid, start - bodyp);
     }
 
     if ((append2buffer(&(ctxdata->data2sign), &(ctxdata->data2sign_len), (char*) start, length)) != 0) {
