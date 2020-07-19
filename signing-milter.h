@@ -29,9 +29,9 @@
 
 #define STR_PROGNAME    "signing-milter"
 #ifdef NDEBUG
-#define STR_PROGVERSION "20190125"
+#define STR_PROGVERSION "20200719"
 #else
-#define STR_PROGVERSION "20190125-debug"
+#define STR_PROGVERSION "20200719-debug"
 #endif
 
 /*
