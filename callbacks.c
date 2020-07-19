@@ -1,6 +1,6 @@
 /*
  * signing-milter - callbacks.c
- * Copyright (C) 2010-2018  Andreas Schulze
+ * Copyright (C) 2010-2020  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -401,6 +401,45 @@ sfsistat callback_eom(SMFICTX* ctx) {
     }
 
     logmsg(LOG_DEBUG, "callback_eom: ctxdata->data2sign_len=%zu", ctxdata->data2sign_len);
+
+    /*
+     * discard/don't sign the optional epilogue
+     */
+    if (ctxdata->mailflags & MF_TYPE_MULTIPART) {
+
+        unsigned char* old_end = ctxdata->data2sign + ctxdata->data2sign_len;
+        unsigned char* new_end;
+        size_t         skipped_epilog_bytes;
+        int            found = 0;
+
+        logmsg(LOG_DEBUG, "%s: try discarding optional RFC 2046 epilogue",
+                          ctxdata->queueid);
+        logmsg(LOG_DEBUG, "%s", ctxdata->data2sign);
+
+        for (new_end = old_end;
+             new_end > ctxdata->data2sign;
+             new_end--) {
+            /* logmsg(LOG_DEBUG, "%c, %c, %c, %c",
+                              *(new_end-4), *(new_end-3),
+                              *(new_end-2), *(new_end-1)); */
+            if (   *(new_end-1) == '\n' && *(new_end-2) == '\r'
+                && *(new_end-3) == '-'  && *(new_end-4) == '-'  ) {
+              skipped_epilog_bytes = old_end - new_end;
+              found = 1;
+              if (skipped_epilog_bytes > 0) {
+                  logmsg(LOG_INFO, "%s: %lu bytes RFC 2046 epilogue discarded",
+                                   ctxdata->queueid, skipped_epilog_bytes);
+              }
+              ctxdata->data2sign_len -= skipped_epilog_bytes;
+              break;
+            }
+        }
+
+        if (new_end == ctxdata->data2sign && found == 0) {
+            logmsg(LOG_WARNING, "%s: callback_eom: strange: RFC 2046 close-delimiter not found", ctxdata->queueid);
+        }
+        logmsg(LOG_DEBUG, "callback_eom: ctxdata->data2sign_len=%zu", ctxdata->data2sign_len);
+    }
 
     gettimeofday(&start_time, NULL);
 
