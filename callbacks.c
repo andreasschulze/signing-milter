@@ -309,6 +309,26 @@ sfsistat callback_eoh(SMFICTX* ctx) {
         return SMFIS_REJECT;
     }
 
+    /*
+     * MIME-Version header present, but no content-*
+     * adding a default
+     * https://tools.ietf.org/html/rfc2045#section-5.2
+     */
+    if ( (ctxdata->headerchain == NULL) && ((ctxdata->mailflags & MF_TYPE_MIME) != 0) ) {
+
+        NODE* n;
+
+        logmsg(LOG_WARNING, "%s: callback_eoh: invalid content: 'MIME-Version'"
+                             "header but no 'Content-*' header found. Adding a"
+                             "sensible default", ctxdata->queueid);
+        if ((n = newnode("Content-Type", "text/plain; charset=us-ascii", PHASE_PRE_SIGN)) == NULL) {
+            logmsg(LOG_ERR, "error: callback_eom: alloc new node failed");
+            return SMFIS_TEMPFAIL;
+        }
+        appendnode(&(ctxdata->headerchain), n);
+    }
+
+
     dump_mailflags(ctxdata->mailflags);
     dump_pkcs7flags(ctxdata->pkcs7flags);
 
@@ -535,10 +555,12 @@ sfsistat callback_eom(SMFICTX* ctx) {
 
         logmsg(LOG_DEBUG, "%s: Header aus PKCS7: %s", ctxdata->queueid, headerline);
 
-	/* XXX: was ist, wenn eine 7bit ASCII Mail signiert wurde?
-         *      dann fehlt doch der Mime-Version: 1.0 Header?
+        /*
+         * wenn eine 7bit ASCII Mail signiert wurde, enthielt die keinen MIME-Header
+         * dann: diesen hier uebernehmen
          */
-        if (strncasecmp(headerline, "mime-version", 12) == 0) {
+        if ( (strncasecmp(headerline, "mime-version", 12) == 0) &&
+             ((ctxdata->mailflags & MF_TYPE_MIME) != 0) ) {
             logmsg(LOG_DEBUG, "%s: skip mime-version header", ctxdata->queueid);
             if (headerline)
                 free(headerline);
