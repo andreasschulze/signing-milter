@@ -60,6 +60,7 @@ sfsistat callback_envfrom(SMFICTX* ctx, char** argv) {
     const char*    pemfilename = NULL;
     CTXDATA*       ctxdata;
     char*          daemon_name;
+    int            i;
 
 
     if ((daemon_name = smfi_getsymval(ctx, "{daemon_name}")) == NULL) {
@@ -67,7 +68,12 @@ sfsistat callback_envfrom(SMFICTX* ctx, char** argv) {
         logmsg(LOG_WARNING, "warning: callback_envfrom smfi_getsymval(daemon_name) failed, continue");
     }
 
-    logmsg(LOG_DEBUG, "MAIL FROM: %s (via %s)", argv[0], daemon_name);
+    /*
+     * emty sender has different representations.
+     * in smtpd_milter it is '<>'
+     * in non_smtpd_milter it is ''
+     */
+    logmsg(LOG_DEBUG, "MAIL FROM: '%s' (via %s)", argv[0], daemon_name);
 
     /*
      * Testen, ob die Tabelle aktuell ist.
@@ -82,9 +88,9 @@ sfsistat callback_envfrom(SMFICTX* ctx, char** argv) {
          *  keine weitere Aktion noetig.
          */
         if (opt_signerfromheader) {
-            logmsg(LOG_DEBUG, "no cert for envsender, will look for %s", HEADERNAME_SIGNER);
+            logmsg(LOG_DEBUG, "no cert for envsender, will look for '%s'", HEADERNAME_SIGNER);
         } else {
-            logmsg(LOG_INFO, "no signingdata for %s", argv[0]);
+            logmsg(LOG_INFO, "no signingdata for '%s'", argv[0]);
             return SMFIS_ACCEPT;
         }
     }
@@ -102,16 +108,18 @@ sfsistat callback_envfrom(SMFICTX* ctx, char** argv) {
     }
 
     if (pemfilename != NULL && *pemfilename != '\0') {
-        logmsg(LOG_INFO, "signingdata from envsender %s", argv[0]);
-        if (ctxdata_setup(ctxdata, pemfilename) != 0)
+        logmsg(LOG_INFO, "signingdata from envsender '%s'", argv[0]);
+        if ((i = ctxdata_setup(ctxdata, pemfilename)) != 0) {
+            logmsg(LOG_ERR, "callback_envfrom: ctxdata_setup() failed: rc=%i, envsender='%s', file=%s", i, argv[0], pemfilename);
             return SMFIS_TEMPFAIL;
+        }
     }
 
     /*
      * save the private data
      */
     if (smfi_setpriv(ctx, ctxdata) != MI_SUCCESS) {
-        logmsg(LOG_ERR, "error: callback_envfrom: setpriv failed");
+        logmsg(LOG_ERR, "error: callback_envfrom: setpriv failed, envsender='%s'", argv[0]);
         return SMFIS_TEMPFAIL;
     }
 
@@ -140,11 +148,23 @@ sfsistat callback_envrcpt(SMFICTX* ctx, char** argv) {
     if (dict_modetable.result != NULL && *dict_modetable.result != '\0') {
         /*
          * Empfaenger in der modetable gefunden.
-         * Umschalten auf alternative Signaturmethode ( gilt dann natuerlich fuer *alle* Empfaenger )
+         * Ergebnis gilt fuer *alle* Empfaenger.
          */
-        logmsg(LOG_DEBUG, "callback_envrcpt: %s found in modetable: alternative signingmode enabled", argv[0]);
-        ctxdata->mailflags |= MF_SIGNMODE_OPAQUE;
+        logmsg(LOG_DEBUG, "callback_envrcpt: %s found in modetable: value='%s'", argv[0], dict_modetable.result);
 
+        if (strstr(dict_modetable.result, "skip") != NULL) {
+            logmsg(LOG_INFO, "modetable hit: skip signing for %s", argv[0]);
+            /* TODO: muss hier noch Speicher freigegeben werden? */
+            return SMFIS_ACCEPT;
+        }
+        if (strstr(dict_modetable.result, "opaque") != NULL) {
+            logmsg(LOG_DEBUG, "callback_envrcpt: opaque signingmode enabled for %s", argv[0]);
+            ctxdata->mailflags |= MF_SIGNMODE_OPAQUE;
+        }
+        if (strstr(dict_modetable.result, "keep") != NULL) {
+            logmsg(LOG_INFO, "modetable hit: keep message for %s in /tmp", argv[0]);
+            ctxdata->keepdir = "/tmp";
+        }
     }
     dump_mailflags(ctxdata->mailflags);
     dump_pkcs7flags(ctxdata->pkcs7flags);
@@ -166,12 +186,21 @@ sfsistat callback_header(SMFICTX* ctx, char* headerf, char* headerv) {
 
     CTXDATA*       ctxdata;
     NODE*          n;
+    int            i;
 
     /* logmsg(LOG_DEBUG, "HEADER: %s %s", headerf, headerv);*/
 
     if ((ctxdata = (CTXDATA*) smfi_getpriv(ctx)) == NULL) {
         logmsg(LOG_DEBUG, "callback_header: context is not set, continue");
         return SMFIS_CONTINUE;
+    }
+
+    if (!ctxdata->queueid) {
+        if ((ctxdata->queueid = smfi_getsymval(ctx, "{i}")) == NULL) {
+            ctxdata->queueid = "unknown";
+            logmsg(LOG_WARNING, "%s: warning: callback_eoh: smfi_getsymval(queueid) failed", ctxdata->queueid);
+        }
+        logmsg(LOG_NOTICE, "callback_header: got queuid: %s", ctxdata->queueid);
     }
 
     if (strcasecmp(headerf, "mime-version") == 0) {
@@ -234,8 +263,10 @@ sfsistat callback_header(SMFICTX* ctx, char* headerf, char* headerv) {
             return SMFIS_ACCEPT;
         }
 
-        if (ctxdata_setup(ctxdata, pemfilename) != 0)
+        if ((i = ctxdata_setup(ctxdata, pemfilename)) != 0) {
+            logmsg(LOG_ERR, "callback_header: ctxdata_setup() failed: rc=%i, headerf=, headerv=, file=%s", i, headerf, headerv, pemfilename);
             return SMFIS_TEMPFAIL;
+        }
 
         /*
          * Headerfeld muss in callback_eom geloescht werden
@@ -256,22 +287,34 @@ sfsistat callback_eoh(SMFICTX* ctx) {
         logmsg(LOG_DEBUG, "callback_eoh: context is not set, continue");
         return SMFIS_CONTINUE;
     }
-    dump_mailflags(ctxdata->mailflags);
-    dump_pkcs7flags(ctxdata->pkcs7flags);
-
-    if (opt_signerfromheader && ctxdata->pemfilename == NULL) {
-        logmsg(LOG_INFO, "callback_eoh: no signingdata ...");
-        return SMFIS_ACCEPT;
-    }
 
     /*
      * Nach dem DATA steht die QueueID fest. Da dieser Milter kein
      * callback beim DATA-Kommano implementiert, ist dies der erste
      * callback, wo die QueueID abrufbar ist.
      */
-    if ((ctxdata->queueid = smfi_getsymval(ctx, "{i}")) == NULL) {
-        ctxdata->queueid = "unknown";
-        logmsg(LOG_WARNING, "%s: warning: callback_eoh: smfi_getsymval(queueid) failed", ctxdata->queueid);
+    if (!ctxdata->queueid) {
+        if ((ctxdata->queueid = smfi_getsymval(ctx, "{i}")) == NULL) {
+            ctxdata->queueid = "unknown";
+            logmsg(LOG_WARNING, "%s: warning: callback_eoh: smfi_getsymval(queueid) failed", ctxdata->queueid);
+        }
+    }
+
+    /* RFC 2045: MIME-Version Header ist Pflicht, wenn Content-* Header benutzt werden */
+    if ( (ctxdata->headerchain != NULL) && ((ctxdata->mailflags & MF_TYPE_MIME) == 0) ) {
+
+        char reply[] = "invalid Content: no 'MIME-Version' header but 'Content-*' header found. That violates RFC 2045";
+        logmsg(LOG_ERR, "%s: callback_eoh: %s", ctxdata->queueid, reply);
+        smfi_setreply(ctx, "550", "5.6.0", reply);
+        return SMFIS_REJECT;
+    }
+
+    dump_mailflags(ctxdata->mailflags);
+    dump_pkcs7flags(ctxdata->pkcs7flags);
+
+    if (opt_signerfromheader && ctxdata->pemfilename == NULL) {
+        logmsg(LOG_INFO, "%s: callback_eoh: no signingdata ...", ctxdata->queueid);
+        return SMFIS_ACCEPT;
     }
 
     if ((headerchain2signingbuffer(ctx, ctxdata)) != 0) {
@@ -337,6 +380,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
     CTXDATA*       ctxdata;
     BUF_MEM*       outmem;
     struct timeval start_time, end_time, duration;
+    char*          keepdir;
 
     unsigned char*  end;
     size_t          length;
@@ -381,15 +425,20 @@ sfsistat callback_eom(SMFICTX* ctx) {
         return SMFIS_TEMPFAIL;
     }
 
-    if (opt_keepdir != NULL) {
-      bio2file(ctxdata->inbio, "plain", ctxdata->queueid);
+    /* global oder bei Bedarf (modetable) Daten aufheben */
+    if ((keepdir = opt_keepdir) == NULL) {
+        keepdir = ctxdata->keepdir;
+    }
+
+    if (keepdir != NULL) {
+      bio2file(ctxdata->inbio, keepdir, "plain", ctxdata->queueid);
     }
 
     dump_mailflags(ctxdata->mailflags);
     dump_pkcs7flags(ctxdata->pkcs7flags);
 
     if ((ctxdata->pkcs7 = PKCS7_sign(ctxdata->cert, ctxdata->key, ctxdata->chain, ctxdata->inbio, ctxdata->pkcs7flags)) == NULL) {
-        logmsg(LOG_ERR, "%s: error: callback_eom: creating PKCS#7 structure failed", ctxdata->queueid);
+        logmsg(LOG_ERR, "%s: error: callback_eom: creating PKCS#7 structure failed, cert=%s", ctxdata->queueid, ctxdata->pemfilename);
         return SMFIS_TEMPFAIL;
     }
 
@@ -411,10 +460,6 @@ sfsistat callback_eom(SMFICTX* ctx) {
         duration.tv_sec--;
     }
 
-    if (opt_keepdir != NULL) {
-        bio2file(ctxdata->outbio, "signed", ctxdata->queueid);
-    }
-
     /*
      * Content-Type Header nun wirklich löschen
      */
@@ -432,7 +477,13 @@ sfsistat callback_eom(SMFICTX* ctx) {
         }
     }
 
-    /* aus outbio die neuen MIME-Header rausziehen */
+    if (keepdir != NULL) {
+        bio2file(ctxdata->outbio, keepdir, "signed", ctxdata->queueid);
+    }
+
+    /*
+     * aus outbio die neuen MIME-Header rausziehen
+     */
     for(;;) {
         char* headerline;
         char* headerf;
@@ -448,6 +499,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
             return SMFIS_TEMPFAIL;
         }
 
+        /* leere Zeile: header ist komplett */
         if ((strcmp(headerline, "\r\n") == 0) || (strcmp(headerline, "\n") == 0)) {
             if (headerline)
                 free(headerline);
@@ -456,6 +508,9 @@ sfsistat callback_eom(SMFICTX* ctx) {
 
         logmsg(LOG_DEBUG, "%s: Header aus PKCS7: %s", ctxdata->queueid, headerline);
 
+	/* XXX: was ist, wenn eine 7bis Ascii Mail signiert wurde?
+         *      dann fehlt doch der Mime-Version: 1.0 Header?
+         */
         if (strncasecmp(headerline, "mime-version", 12) == 0) {
             logmsg(LOG_DEBUG, "%s: skip mime-version header", ctxdata->queueid);
             if (headerline)

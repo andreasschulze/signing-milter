@@ -29,9 +29,9 @@
 
 #define STR_PROGNAME    "signing-milter"
 #ifdef NDEBUG
-#define STR_PROGVERSION "20120731"
+#define STR_PROGVERSION "20130311"
 #else
-#define STR_PROGVERSION "20120731-debug"
+#define STR_PROGVERSION "20130311-debug"
 #endif
 
 /*
@@ -96,6 +96,7 @@ struct ctxdata {
     size_t          buffer_len;
     char*           queueid;
     int             first_bodychunk_seen;
+    char*           keepdir;
 };
 #define CTXDATA struct ctxdata
 

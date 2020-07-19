@@ -24,9 +24,6 @@
 
 int ctxdata_setup(CTXDATA* ctxdata, const char* pemfilename) {
 
-    char* chainfilename;
-    char* p;
-
     assert(ctxdata != NULL);
     assert(pemfilename != NULL);
 
@@ -48,7 +45,7 @@ int ctxdata_setup(CTXDATA* ctxdata, const char* pemfilename) {
         return(4);
     }
 
-    ctxdata->pkcs7flags = PKCS7_DETACHED | PKCS7_NOOLDMIMETYPE | PKCS7_STREAM;
+    ctxdata->pkcs7flags = PKCS7_DETACHED | PKCS7_NOOLDMIMETYPE | PKCS7_STREAM | PKCS7_CRLFEOL;
 
     ctxdata->buffer_len = MAXHEADERLEN;
     if ((ctxdata->buffer = malloc(ctxdata->buffer_len)) == NULL) {
@@ -56,26 +53,28 @@ int ctxdata_setup(CTXDATA* ctxdata, const char* pemfilename) {
         return(5);
     }
 
-    if ((chainfilename = strdup(pemfilename)) == NULL) {
-        logmsg(LOG_ERR, "error: ctxdata_setup: malloc for chainfilename failed: %m", strerror(errno));
-        return(6);
-    }
-
-    if ((p = strstr(chainfilename, "cert+key.pem")) == NULL) {
+    if (strstr(ctxdata->pemfilename, "cert+key.pem") == NULL) {
         logmsg(LOG_DEBUG, "info: certificate file not named /path/to/foo-cert+key.pem, including chaincerts disabled");
     } else {
-        if ((realloc(chainfilename, strlen(pemfilename) - 3) == NULL)) {
-            logmsg(LOG_ERR, "error: ctxdata_setup: realloc for ctxdata.chainfilename failed: %m", strerror(errno));
-            return(7);
+
+        size_t len;
+        char*  chainfilename;
+
+        len = strlen(ctxdata->pemfilename); /* assume: strlen does not return an error */
+
+        if ((chainfilename = malloc(len)) == NULL) {
+            logmsg(LOG_ERR, "error: ctxdata_setup: malloc for chainfilename failed: %m", strerror(errno));
+            return(6);
         }
-	*p = '\0';
-        strcat(p, "chain.pem");
+
+        bzero(chainfilename, len);
+        strncpy(chainfilename, ctxdata->pemfilename, (size_t) len - 12); /* minus strlen('cert+key.pem') */
+        strcat(chainfilename, "chain.pem");
+
         ctxdata->chain = load_pem_chain(chainfilename);
         logmsg(LOG_INFO, "info: %schaincerts loaded from %s", ctxdata->chain != NULL ? "" : "no ", chainfilename);
+        free(chainfilename);
     }
-
-    if (chainfilename)
-       free(chainfilename);
 
     return(0);
 }

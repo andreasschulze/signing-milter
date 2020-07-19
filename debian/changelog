@@ -1,3 +1,42 @@
+signing-milter (2013031101) stable; urgency=low
+
+  * break_after_semikolon: Zeilenumbrueche im Header nur mit \n statt \r\n 
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Mon, 11 Mar 2013 14:46:33 +0100
+
+signing-milter (2013030801) stable; urgency=low
+
+  * modetable kennt "keep" 
+  * Debug-Dateien werden in der korrekten Laenge geschrieben
+  * PKCS7_CRLFEOL
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Fri, 08 Mar 2013 09:58:43 +0100
+
+signing-milter (2013030701) stable; urgency=low
+
+  * polish
+  * modetable kennt aktionen: opaque and skip
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Thu, 07 Mar 2013 23:50:48 +0100
+
+signing-milter (2012121201) stable; urgency=low
+
+  * Fix: Mails, die gegen RFC2045 verstoßen, werden abgewiesen
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Wed, 12 Dec 2012 11:15:38 +0100
+
+signing-milter (2012092601) stable; urgency=low
+
+  * Logging verbessert
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Wed, 26 Sep 2012 10:58:36 +0200
+
+signing-milter (2012090601) stable; urgency=low
+
+  * Versuch, Speicherfehler zu bereinigen 
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Tue, 04 Sep 2012 09:05:44 +0200
+
 signing-milter (2012073101) stable; urgency=low
 
   * Support fuer Zwischenzertifikatsketten 

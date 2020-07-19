@@ -1,6 +1,6 @@
 /*
  * signing-milter - utils/bio2file.c
- * Copyright (C) 2010,2011  Andreas Schulze
+ * Copyright (C) 2010-2013  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,25 +22,24 @@
 
 #include "bio2file.h"
 
-int bio2file(BIO *b, const char* prefix, const char* queueid) {
+int bio2file(BIO *b, const char* dir, const char* prefix, const char* queueid) {
 
     BIO*     biofile;
     BUF_MEM* pp;
     char*    bio_filename;
-    char*    p;
 
+    assert(dir != NULL);
     assert(prefix != NULL);
     assert(queueid != NULL);
 
-    if ((bio_filename = malloc(strlen(opt_keepdir) + strlen(prefix) + strlen(queueid + 1) + 100)) == NULL) {
+    if ((bio_filename = malloc(strlen(dir) + strlen(prefix) + strlen(queueid + 1) + 100)) == NULL) {
         logmsg(LOG_ERR, "bio2file: malloc for bio_filename failed: %m", strerror(errno));
         return(1);
     }
 
-    sprintf(bio_filename, "%s/%s-%s", opt_keepdir, prefix, queueid);
+    sprintf(bio_filename, "%s/%s-%s", dir, prefix, queueid);
 
     BIO_get_mem_ptr(b, &pp);
-    p = pp->data;
 
     biofile = BIO_new_file(bio_filename, "w");
     if (!biofile) {
@@ -50,7 +49,7 @@ int bio2file(BIO *b, const char* prefix, const char* queueid) {
         return(2);
     }
 
-    BIO_puts(biofile, pp->data);
+    BIO_write(biofile, pp->data, pp->length);
 
     BIO_free(biofile);
     free(bio_filename);

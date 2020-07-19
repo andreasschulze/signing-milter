@@ -1,6 +1,6 @@
 .\"
 .\"signing-milter - signing-milter.8
-.\"Copyright (C) 2010-2012  Andreas Schulze
+.\"Copyright (C) 2010-2013  Andreas Schulze
 .\"
 .\"This program is free software; you can redistribute it and/or modify
 .\"it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 .\"  Andreas Schulze <signing-milter at andreasschulze.de>
 .\"
 .\"
-.TH signing-milter 8 "July, 2012"
+.TH signing-milter 8 "March, 2013"
 .\"
 .SH NAME
 signing-milter \- sign email via milter protocol
@@ -112,9 +112,25 @@ intermediate and root certificates that will be included in the signature.
 .B \-n modetable
 .I signing-milter
 can use this optional table to lookup recipient addresses. If at least one
-recipient of a message is found in modetable, the signingmode is switched from
-detached to opaque. Opaque mode is intended to preserve signatures for mail
-transiting broken MTAs.
+recipient of a message is found in modetable, the result is applied to the
+whole message.
+.sp
+The value may contain any combination of the following words:
+.RS
+.TP
+.B keep
+for debugging purposes keep the plain and signed data unter /tmp/*-$queueid.
+In contrast to the option
+.I \-k
+the directory is fix and saving occour not for all messages.
+.TP
+.B opaque
+the signingmode is switched from detached to opaque. Opaque mode is intended
+to preserve signatures for mail transiting broken MTAs.
+.TP
+.B skip
+message will not be signed and simply pass unchanged.
+.RE
 .TP
 .B \-s socket
 Specifies the socket that should be established by the filter to receive

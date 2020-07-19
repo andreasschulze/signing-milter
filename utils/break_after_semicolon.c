@@ -1,6 +1,6 @@
 /*
  * signing-milter - utils/break_after_semicolon.c
- * Copyright (C) 2010,2011  Andreas Schulze
+ * Copyright (C) 2010-2013  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,8 @@ char* break_after_semicolon(char* string) {
         return (string);
     }
 
-    /* pro semokolon 2 neue Byte: \r und \n */
-    if ((new_string = malloc(strlen(string) + 2*num_semicolon + 1)) == NULL) {
+    /* pro semokolon ein zusätzliches Byte */
+    if ((new_string = malloc(strlen(string) + num_semicolon + 1)) == NULL) {
         logmsg(LOG_ERR, "FATAL: break_after_semicolon: malloc failed");
         return(NULL);
     }
@@ -72,11 +72,9 @@ char* break_after_semicolon(char* string) {
     while (*p_old) { /* bis \0 */
         *p_new = *p_old;
 
-        if (*p_new != ';') {
+        if (*p_old != ';') {
             p_old++; p_new++;
         } else {
-            p_new++;
-            *p_new = '\r';
             p_new++;
             *p_new = '\n';
             p_new++;

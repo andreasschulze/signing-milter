@@ -21,7 +21,7 @@
 #
 
 Name:		signing-milter
-Version:	20120731
+Version:	20120904
 %define		debian_version %{version}01
 Release:	1.1
 Summary:	Sign email via milter protocol

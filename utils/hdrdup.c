@@ -38,6 +38,8 @@ char* hdrdup(const char* string) {
     char   c;
     char*  p;
     size_t string_len;
+    size_t dup_len;
+    size_t skip_len;
     int    skip = 0;
 
     assert(string != NULL);
@@ -74,6 +76,14 @@ char* hdrdup(const char* string) {
         p++;
     }
     *p = '\0'; /* String abschliessen */
+
+    dup_len = strlen(dup) + 1; /* fuer die abschliessende \0 */
+    if ((skip_len = string_len - dup_len) > (size_t) 0) {
+        logmsg(LOG_INFO, "hdrdup: string_len/%u != dup_len/%u, val=%s", (unsigned int) string_len, (unsigned int) dup_len, dup);
+        if ((p = realloc(dup, dup_len)) == NULL)
+            logmsg(LOG_ERR, "hdrdup: realloc failed");
+        dup = p;
+    }
 
     return (dup);
 }

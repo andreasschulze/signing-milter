@@ -136,9 +136,32 @@ intermediate and root certificates that will be included in the signature.
 <I>signing-milter</I>
 
 can use this optional table to lookup recipient addresses. If at least one
-recipient of a message is found in modetable, the signingmode is switched from
-detached to opaque. Opaque mode is intended to preserve signatures for mail
-transiting broken MTAs.
+recipient of a message is found in modetable, the result is applied to the
+whole message.
+<P>
+The value may contain any combination of the following words:
+<DL COMPACT><DT><DD>
+<DL COMPACT>
+<DT><B>keep</B>
+
+<DD>
+for debugging purposes keep the plain and signed data unter /tmp/*-$queueid.
+In contrast to the option
+<I>-k</I>
+
+the directory is fix and saving occour not for all messages.
+<DT><B>opaque</B>
+
+<DD>
+the signingmode is switched from detached to opaque. Opaque mode is intended
+to preserve signatures for mail transiting broken MTAs.
+<DT><B>skip</B>
+
+<DD>
+message will not be signed and simply pass unchanged.
+</DL>
+</DL>
+
 <DT><B>-s socket</B>
 
 <DD>
@@ -333,6 +356,6 @@ Copyright (c) 2010-2012, Andreas Schulze. All rights reserved.
 </DL>
 <HR>
 This document was created by man2html, using the manual pages.<BR>
-Time: 00:00:00 GMT, July 31, 2012
+Time: 00:00:00 GMT, March 11, 2013
 </BODY>
 </HTML>
