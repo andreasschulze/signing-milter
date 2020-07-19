@@ -77,7 +77,7 @@ char* break_after_semicolon(char* string, int phase) {
             p_new++;
             *p_new = '\n';
             p_new++;
-            *p_new = '\t';
+            *p_new = ' ';
             p_new++;
             p_old++; /* Zeichen nach ; */
             if (*p_old != ' ')
