@@ -1,4 +1,9 @@
 20200719
+ viele MUA bieten eine Option "quelltext anzeigen" Dort werden TABs meist als
+ SPACE angezeigt. COPY&PASTE verändert so wieder die Signatur.
+ Headerumbrüche mit einem SPACE einrücken.
+
+20200719
  bei einer ASCII-Mail den MIME-Version Header aus dem signierten Daten
  übernehmen
 
