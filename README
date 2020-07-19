@@ -1,3 +1,7 @@
+20200819
+ bei einer ASCII-Mail den MIME-Version Header aus dem signierten Daten
+ übernehmen
+
 Juli 2020
  Symptom: Outlook zeigt signierte Mails als verändert an.
  Thunderbird zeigt hingegen bei den selben Mails eine valide Signatur an.
