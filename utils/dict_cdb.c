@@ -1,3 +1,31 @@
+/*
+ * signing-milter - utils/dict_cdb.c
+ * Copyright (C) 2010,2011  Andreas Schulze
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; only version 2 of the License is applicable.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Authors:
+ *      Andreas Schulze <signing-milter at andreasschulze.de> based on
+ *      postfix/src/utils/dict_cdb.c by
+ *      Michael Tokarev <mjt@tls.msk.ru> based on dict_db.c by
+ *      Wietse Venema
+ *      IBM T.J. Watson Research
+ *      P.O. Box 704
+ *      Yorktown Heights, NY 10598, USA
+ *
+ */
+
 #include "dict_cdb.h"
 
 void dict_open(const char* path, DICT* dict) {
@@ -97,7 +125,7 @@ const char* dict_lookup(DICT* dict, const char* key) {
      * smtpd_milter:     adressen *haben* <>
      * Annahme: wenn das erste Zeichen ein < ist,
      *          wird das letzte Zeichen ein > sein.
-     * Dazu wird keylen zweimal decrementiert.
+     * Dazu wird keylen zweimal dekrementiert.
      */
     p = (char*) key;
     if (*p == '<') {

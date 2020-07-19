@@ -1,3 +1,17 @@
+signing-milter (2011053001) stable; urgency=low
+
+  * GPL2 
+  * Manpage ueberarbeitet
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Mon, 30 May 2011 19:23:02 +0200
+
+signing-milter (2011052901) stable; urgency=low
+
+  * Lizenz- und Copyright in jeder Datei 
+  * main.c/output_statistics() -> stats.c/output_stats()
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Sun, 29 May 2011 10:41:51 +0200
+
 signing-milter (2011030101) stable; urgency=low
 
   * Speicherleck bereinigt: ctxdata freigeben

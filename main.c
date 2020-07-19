@@ -1,3 +1,25 @@
+/*
+ * signing-milter - main.c
+ * Copyright (C) 2010,2011  Andreas Schulze
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; only version 2 of the License is applicable.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Authors:
+ *   Andreas Schulze <signing-milter at andreasschulze.de>
+ *
+ */
+
 #include "main.h"
 
 /* Standardwerte setzen */
@@ -307,7 +329,7 @@ int main(int argc, char** argv) {
     ERR_free_strings();
     EVP_cleanup();
 
-    output_statistic();
+    output_stats();
 
 #ifdef DMALLOC
     dmalloc_log_stats();
@@ -323,7 +345,7 @@ void sig_handler(int sig) {
     logmsg(LOG_INFO, "%s: signal %i recieved", STR_PROGNAME, sig);
     signal(sig, sig_handler);
 
-    output_statistic();
+    output_stats();
     reset_stats();
 
 #ifdef DMALLOC
@@ -331,16 +353,4 @@ void sig_handler(int sig) {
     dmalloc_log_stats();
     dmalloc_log_unfreed();
 #endif
-}
-
-void output_statistic(void) {
-
-    struct timeval stats_totaltime;
-    unsigned long int stats_count;
-
-    get_signing_time(&stats_totaltime);
-    stats_count = get_signed_mails();
-
-    logmsg(LOG_NOTICE, "STATISTIK: %d/%d.%d", stats_count,
-       stats_totaltime.tv_sec,stats_totaltime.tv_usec);
 }
