@@ -1,3 +1,11 @@
+31. Juli 2012
+ Der Milter hat bisher keine Zwischen- oder Rootzertifikate in die Signatur
+ aufgenommen. Dies wird nun unterstützt. Dazu müssen die Signaturdaten
+ (Zertifikat und Schlüssel) in einer Datei "/path/to/foo-cert+key.pem"
+ abgelegt werden. Existiert dann eine Datei "/path/to/foo-chain.pem", werden
+ darin die Zertifikate der Zwischen- und Rootzertifikate erwartet und in die
+ Signatur eingefügt
+
 1. März 2011
  die Dezemberversion hat einen fatalen Speicherfresser in
  callback_close

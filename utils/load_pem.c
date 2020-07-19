@@ -1,6 +1,6 @@
 /*
  * signing-milter - utils/load_pem.c
- * Copyright (C) 2010,2011  Andreas Schulze
+ * Copyright (C) 2010-2012  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,4 +65,51 @@ end:
         BIO_free(bio);
 
     return(pkey);
+}
+
+STACK_OF(X509)* load_pem_chain(const char* file) {
+
+    BIO*                 bio   = NULL;
+    STACK_OF(X509_INFO)* sk    = NULL;
+    STACK_OF(X509)*      stack = NULL;
+    X509_INFO*           xi;
+    int                  numcerts;
+
+    if((bio=BIO_new_file(file, "r")) == NULL) {
+        logmsg(LOG_DEBUG, "load_pem_chain: can't load %s", file);
+        goto end;
+    }
+
+    if((sk=PEM_X509_INFO_read_bio(bio,NULL,NULL,NULL)) == NULL) {
+        goto end;
+    }
+
+    if((stack = sk_X509_new_null()) == NULL) {
+        goto end;
+    }
+
+    while (sk_X509_INFO_num(sk)) {
+        xi=sk_X509_INFO_shift(sk);
+        if (xi->x509 != NULL) {
+            sk_X509_push(stack,xi->x509);
+            xi->x509=NULL;
+        }
+        X509_INFO_free(xi);
+    }
+
+    numcerts = sk_X509_num(stack);
+    if(numcerts == 0) {
+        sk_X509_free(stack);
+        stack = NULL;
+    }
+    logmsg(LOG_DEBUG, "load_pem_chain: loaded %i certificate%s from %s", numcerts, numcerts != 1 ? "s" : "", file);
+
+end:
+    if (bio != NULL)
+        BIO_free(bio);
+
+    if (sk != NULL)
+        sk_X509_INFO_free(sk);
+
+    return (stack);
 }

@@ -1,6 +1,6 @@
 /*
  * signing-milter - utils/utils.h
- * Copyright (C) 2010,2011  Andreas Schulze
+ * Copyright (C) 2010-2012  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ extern void deletechain(NODE* node);
 
 extern X509* load_pem_cert(const char* file);
 extern EVP_PKEY* load_pem_key(const char* file, const char* pass);
+extern STACK_OF(X509)* load_pem_chain(const char* file);
 
 extern void logmsg(int priority, const char *fmt, ...);
 extern char *lowercase(char *);

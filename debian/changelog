@@ -1,3 +1,9 @@
+signing-milter (2012073101) stable; urgency=low
+
+  * Support fuer Zwischenzertifikatsketten 
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Tue, 31 Jul 2012 15:19:22 +0200
+
 signing-milter (2011091801) stable; urgency=low
 
   * /debian ist SQUEEZE kompatibel 

@@ -1,6 +1,6 @@
 #
 #  signing-milter - signing-milter.spec
-#  Copyright (C) 2010,2011  Andreas Schulze
+#  Copyright (C) 2010-2012  Andreas Schulze
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -21,18 +21,18 @@
 #
 
 Name:		signing-milter
-Version:	20110530
+Version:	20120731
 %define		debian_version %{version}01
 Release:	1.1
 Summary:	Sign email via milter protocol
-License:	GNU GPL version 2
+License:	GPL-2.0
 Group:		Productivity/Networking/Email/Utilities
 Url:		https://signing-milter.org
 Source:		https://signing-milter.org/signing-milter_%{debian_version}.tar.gz
 BuildRoot:	%{_tmppath}/%{name}
 BuildRequires:	pwdutils, sendmail-devel >= 8.14, tinycdb-devel >= 0.77
 %if 0%{?sles_version} == 9
-%define		openssl_version 0.9.8o
+%define		openssl_version 0.9.8x
 Source2:	http://www.openssl.org/source/openssl-%{openssl_version}.tar.gz
 %else
 BuildRequires:	openssl-devel

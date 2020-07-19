@@ -1,6 +1,6 @@
 /*
  * signing-milter - ctxdata/cleanup.c
- * Copyright (C) 2010,2011  Andreas Schulze
+ * Copyright (C) 2010-2012  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,9 @@ void ctxdata_cleanup(CTXDATA* ctxdata) {
 
     if (ctxdata->key != NULL)
         EVP_PKEY_free(ctxdata->key);
+
+    if (ctxdata->chain != NULL)
+        sk_X509_pop_free(ctxdata->chain, X509_free);
 
     if (ctxdata->inbio != NULL)
         BIO_free_all(ctxdata->inbio);

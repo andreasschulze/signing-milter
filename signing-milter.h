@@ -1,6 +1,6 @@
 /*
  * signing-milter - signing-milter.h
- * Copyright (C) 2010,2011  Andreas Schulze
+ * Copyright (C) 2010-2012  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
 
 #define STR_PROGNAME    "signing-milter"
 #ifdef NDEBUG
-#define STR_PROGVERSION "20110530"
+#define STR_PROGVERSION "20120731"
 #else
-#define STR_PROGVERSION "20110530-debug"
+#define STR_PROGVERSION "20120731-debug"
 #endif
 
 /*
@@ -80,21 +80,22 @@ struct node_t {
 
 /* ======= CALLBACK ================== */
 struct ctxdata {
-    char*          pemfilename;
-    NODE*          headerchain;
-    unsigned char* data2sign;
-    size_t         data2sign_len;
-    X509*          cert;
-    EVP_PKEY*      key;
-    BIO*           inbio;
-    BIO*           outbio;
-    PKCS7*         pkcs7;
-    int            pkcs7flags;
-    int            mailflags;
-    char*          buffer;
-    size_t         buffer_len;
-    char*          queueid;
-    int            first_bodychunk_seen;
+    char*           pemfilename;
+    NODE*           headerchain;
+    unsigned char*  data2sign;
+    size_t          data2sign_len;
+    X509*           cert;
+    EVP_PKEY*       key;
+    STACK_OF(X509)* chain;
+    BIO*            inbio;
+    BIO*            outbio;
+    PKCS7*          pkcs7;
+    int             pkcs7flags;
+    int             mailflags;
+    char*           buffer;
+    size_t          buffer_len;
+    char*           queueid;
+    int             first_bodychunk_seen;
 };
 #define CTXDATA struct ctxdata
 

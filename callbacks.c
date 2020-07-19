@@ -1,6 +1,6 @@
 /*
  * signing-milter - callbacks.c
- * Copyright (C) 2010,2011  Andreas Schulze
+ * Copyright (C) 2010-2012  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,7 +140,7 @@ sfsistat callback_envrcpt(SMFICTX* ctx, char** argv) {
     if (dict_modetable.result != NULL && *dict_modetable.result != '\0') {
         /*
          * Empfaenger in der modetable gefunden.
-         * Umschalten auf alternative Signaturmethode ( gilt dann natuerlich fuer *alle* Empfaenger ).
+         * Umschalten auf alternative Signaturmethode ( gilt dann natuerlich fuer *alle* Empfaenger )
          */
         logmsg(LOG_DEBUG, "callback_envrcpt: %s found in modetable: alternative signingmode enabled", argv[0]);
         ctxdata->mailflags |= MF_SIGNMODE_OPAQUE;
@@ -353,7 +353,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
      * abgeschitten und durch *EIN* \r\n ersetzt
      *
      * ... und das scheint der Kniff zu sein,
-     * der Outlook und Outlock Express gluecklich macht !
+     * der Outlook und Outlook Express gluecklich macht !
      */
     end = ctxdata->data2sign + ctxdata->data2sign_len - 1;
     length = ctxdata->data2sign_len;
@@ -388,7 +388,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
     dump_mailflags(ctxdata->mailflags);
     dump_pkcs7flags(ctxdata->pkcs7flags);
 
-    if ((ctxdata->pkcs7 = PKCS7_sign(ctxdata->cert, ctxdata->key, NULL, ctxdata->inbio, ctxdata->pkcs7flags)) == NULL) {
+    if ((ctxdata->pkcs7 = PKCS7_sign(ctxdata->cert, ctxdata->key, ctxdata->chain, ctxdata->inbio, ctxdata->pkcs7flags)) == NULL) {
         logmsg(LOG_ERR, "%s: error: callback_eom: creating PKCS#7 structure failed", ctxdata->queueid);
         return SMFIS_TEMPFAIL;
     }
@@ -518,7 +518,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
     /*
      * etwas angeben ...
      */
-    logmsg(LOG_NOTICE, "%s: %ssigned with %s", ctxdata->queueid, ctxdata->mailflags & MF_SIGNMODE_OPAQUE ? "opaque" : "clear", ctxdata->pemfilename);
+    logmsg(LOG_NOTICE, "%s: %ssigned with %s%s", ctxdata->queueid, ctxdata->mailflags & MF_SIGNMODE_OPAQUE ? "opaque" : "clear", ctxdata->pemfilename, ctxdata->chain != NULL ? " (+chain)" : "");
     logmsg(LOG_INFO, "%s: signing %ld byte took %d.%d sec", ctxdata->queueid, ctxdata->data2sign_len, duration.tv_sec, duration.tv_usec);
 
     /*
