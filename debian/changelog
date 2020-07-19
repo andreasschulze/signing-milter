@@ -1,3 +1,9 @@
+signing-milter (2011091801) stable; urgency=low
+
+  * /debian ist SQUEEZE kompatibel 
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Sun, 18 Sep 2011 22:00:04 +0200
+
 signing-milter (2011053001) stable; urgency=low
 
   * GPL2 

@@ -25,12 +25,12 @@ Section: mail
 Priority: extra
 Maintainer: Andreas Schulze <debian@andreasschulze.de>
 Build-Depends: cdbs, debhelper (>= 7), dv-libmilter-dev | libmilter-dev, libcdb-dev, libdmalloc-dev, libssl-dev
-Standards-Version: 3.8.0
+Standards-Version: 3.9.1
 Homepage: https://signing-milter.org
 
 Package: signing-milter
 Architecture: i386
-Depends: ${shlibs:Depends}, dv-baseconfig, libcdb1, libssl0.9.8
+Depends: ${misc:Depends}, ${shlibs:Depends}, dv-baseconfig, libcdb1, libssl0.9.8
 Description: Sign email via milter protocol
  signing-milter  uses  the  milter  interface, originally distributed as
  part of version 8.11 of sendmail(8), to  provide  signing  service  for
