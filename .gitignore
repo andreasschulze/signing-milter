@@ -1,0 +1,4 @@
+config.h
+*.o
+*/*.a
+signing-milter
