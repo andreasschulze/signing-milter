@@ -1,0 +1,194 @@
+.\" other parameters are allowed: see man(7), man(1)
+.TH signing-milter 8 "December, 2010"
+.\"
+.SH NAME
+signing-milter \- sign email via milter protocol
+.\"
+.SH SYNOPSIS
+.B signing-milter
+.RI [ options ]
+.\"
+.SH DESCRIPTION
+.B signing-milter
+uses the
+.I milter
+interface, originally distributed as part of version 8.11 of
+.B sendmail(8),
+to provide signing service for mail transiting a milter-aware MTA.
+.\"
+.SH OPTIONS
+.TP
+.B \-h
+Show summary of options and exit.
+.TP
+.B \-v
+Show version of program and exit.
+.TP
+.B \-c clientgroup
+If socket is
+.I [unix|local]:path
+.I signing-milter
+will adjust
+.I path
+to be read/writeable by group
+.I clientgroup.
+The group must be any group other then root and the group
+.I signing-milter
+run as. The parameter is required unless using an TCP socket.
+.TP
+.B \-d loglevel
+Set the loglevel. The default level 3 logs all error. Valid values are
+effective syslog priorities as described in
+.IR /usr/include/syslog.h
+.TP
+.B \-f
+normaly
+.I signing-milter
+uses the envelope sender as signeraddress to lookup in the signingtable. If enabled,
+.I signing-milter
+uses also the value of a header named
+.B X-Signer
+to lookup the signeraddress. This is usefull when using VERP (Variable Envelope Return Path).
+.TP
+.B \-g group
+Set the group
+.I signing-milter
+will run as if started under root. If omitted the
+groupname signing-milter is used.
+.TP
+.B \-k directory
+for debugging purposes
+.I signing-milter
+can store data to files. These are created in the named directory which must be readable, writeable an executable
+by the user
+.I signing-milter
+run as. It must not have any rights for other.
+.I signing-milter
+creates two files containing unsigned and signed data. The files are named plain-QUEUEID and signed-QUEUEID.
+If omitted no files are written.
+.TP
+.B \-m signingtable
+.I signing-milter
+uses a table to lookup corresponding signingmaterial
+to a given sender address. This table is a
+.I cdb 
+compiled database. The signingtable lists mailaddresses on the left (key),
+one ore more spaces or tabs and a full path to an associates file (value).
+These file must contain a signer certificate and a signer private key in PEM format.
+.sp
+The files containing certificates and private keys are security sensitive.
+Therefore they must only be readable and not writeable for the uid running
+.I signing-milter
+Also they must not be world readable.
+.TP
+.B \-n modetable
+.I signing-milter
+can use this optional table to lookup recipient addresses. If at least one recipient of a message is
+found in modetable, the signingmode is switched from detached to opaque.
+Opaque mode is intended to preserve signatures for mail transiting broken MTAs.
+.TP
+.B \-s socket
+Specifies the socket that should be established by the filter to receive
+connections from
+.I sendmail(8)
+in order to provide service.
+.I socket
+is in one of three forms:
+.I [unix|local]:path
+which creates a UNIX domain socket at the specified path.
+.I inet:port[@host]
+which creates a TCP socket on the specified port.
+.I inet6:port[@host]
+which creates a TCPv6 socket on the specified port.
+If the host is not given as either a hostname or an IP address,
+the socket will be listening on all interfaces.
+If no socket is given at all, the milter listen on
+.I inet6:30053@[::1].
+Let's push IPv6, yeah!
+.TP
+.B \-t timeout
+This is the number of seconds
+.I signing-milter
+will wait for an MTA communication (read or write) before timing out.
+.TP
+.B \-u user
+Set the user
+.I signing-milter
+will run as if started under root. If omitted the
+username signing-milter is used.
+.TP
+.B \-x
+Causes
+.I signing-milter
+to add a header indicating the presence of this filter in the path of the
+message from injection to delivery. The productname, version and hostname
+are included in the headers contents.
+.TP
+.B \-b
+BUGFIX: Causes
+.I signing-milter
+to break headerlines after a ; so content-type lines moved inside a mime-container
+are not longer then 76 characters. Some mailsystems seem to insert such breakes which invalidates
+the signature.
+.\"
+.SH SECURITY
+The
+.I signing-milter
+is security-sensitive. It talks to an MTA and has access to otherwise
+unprotected private keys. It must run at fixed low privilege. The
+.I signing-milter
+refuses to run with root privileges.
+.\"
+.SH ACCOUNTS
+You may start signing-milter under root. Then signing-milter will switch to
+user/group signing-milter or the username given as -u and -g. You may also
+switch to a unprivileged user and then start signing-milter.
+.\"
+.SH LOCAL SOCKET
+If you want
+.I signing-milter
+run with a local unixsocket it is important the socket is accessible by
+.I sendmail(8).
+In this case start
+.I signing-milter
+under root, set -u and -g (or leave them default) and set -c to a group
+other then root and signing-milter.
+.I signing-milter
+will adjust the sockets owner, group and file mode to allow proper access by
+.I sendmail(8).
+.\"
+.SH SIGNALS
+.I signing-milter
+dumps statistical data on SIGALARM. The data contains the
+number of signed messages and the total signingtime in seconds.milliseconds
+separated by /. All counters are set to zero after SIGALARM.
+Also on SIGTERM statistical data are logged.
+.\"
+.SH STARTUP AND LOGGING
+.I signing-milter
+is designed to run by a supervisor like daemontools or runit. It does not fork
+as daemon in background.  So all logging goes to syslog using facility LOG_MAIL.
+All messages exept priority LOG_NOTICE and LOG_INFO are also sent to stdout.
+.\"
+.SH BUGS
+The private signing keys must not be protected by password.
+.I signing-milter
+should also support GnuPG.  A changed signingtable is noticed but not
+reloaded.
+.I signing-milter
+must currently restarted when the signingtable has changed.
+.\"
+.SH SEE ALSO
+.BR cdb (1),
+.BR syslog (3),
+.BR cdb (5),
+.BR sendmail (8)
+.P
+http://cr.yp.to/cdb.html, http://www.corpit.ru/mjt/tinycdb.html
+.P
+http://cr.yp.to/proto/verp.txt
+.SH AUTHOR
+signing-milter was written by Andreas Schulze. Portions of Code are inspired or copied from postfix and opendkim.
+.\"
+.SH COPYRIGHT
+Copyright (c) 2010, Andreas Schulze. All rights reserved

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. /etc/default/signing-milter
+
+if [ "${DISABLE_HOURLY_STATISTIK_LOGGING}" != "yes" ]; then
+    svc -a /var/lib/supervise/signing-milter
+fi

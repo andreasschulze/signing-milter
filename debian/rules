@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/makefile.mk
+
+DEB_MAKE_INSTALL_TARGET = install DESTDIR=$(DEB_DESTDIR)
+
+#install/signing-milter::
+#	install -d $(DEB_DESTDIR)/var/lib/supervise/signing-milter/log
+#	ln -s ../../../../../usr/share/dv-baseconfig/supervise-log2syslog $(DEB_DESTDIR)/var/lib/supervise/signing-milter/log/run

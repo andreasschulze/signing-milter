@@ -1,0 +1,9 @@
+#!/bin/sh
+
+exec < /dev/null
+exec 2>&1
+
+test -f /etc/default/signing-milter && . /etc/default/signing-milter
+
+cd ${WORKDIR:-/etc/signing-milter}
+exec env - /usr/sbin/signing-milter ${OPTIONS}

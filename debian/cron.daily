@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. /etc/default/signing-milter
+
+# taegliche Statistik, wenn nicht deaktiviert ...
+if [ "${DISABLE_DAILY_STATISTIK_LOGGING}" != "yes" ]; then
+    # ... und nicht stündliche Statistik aktiviert ist
+    if [ "${DISABLE_HOURLY_STATISTIK_LOGGING}" = "yes" ]; then
+        svc -a /var/lib/supervise/signing-milter
+    fi
+fi
