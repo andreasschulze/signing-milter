@@ -198,7 +198,7 @@ sfsistat callback_header(SMFICTX* ctx, char* headerf, char* headerv) {
     if (!ctxdata->queueid) {
         if ((ctxdata->queueid = smfi_getsymval(ctx, "{i}")) == NULL) {
             ctxdata->queueid = "unknown";
-            logmsg(LOG_WARNING, "%s: warning: callback_eoh: smfi_getsymval(queueid) failed", ctxdata->queueid);
+            logmsg(LOG_WARNING, "%s: warning: callback_header: smfi_getsymval(queueid) failed", ctxdata->queueid);
         }
         logmsg(LOG_NOTICE, "callback_header: got queuid: %s", ctxdata->queueid);
     }
