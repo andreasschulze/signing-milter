@@ -200,7 +200,7 @@ sfsistat callback_header(SMFICTX* ctx, char* headerf, char* headerv) {
             ctxdata->queueid = "unknown";
             logmsg(LOG_WARNING, "%s: warning: callback_header: smfi_getsymval(queueid) failed", ctxdata->queueid);
         }
-        logmsg(LOG_NOTICE, "callback_header: got queuid: %s", ctxdata->queueid);
+        logmsg(LOG_INFO, "callback_header: got queuid: %s", ctxdata->queueid);
     }
 
     if (strcasecmp(headerf, "mime-version") == 0) {
