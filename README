@@ -1,4 +1,7 @@
 20200719
+ debian/ funktioniert mit den Debian-Versionen Stretch und Buster
+
+20200719
  Der milter beendet sich nicht mehr bei Mails mit meinem MIME-Version Header
  aber ohne Content-* Header, ein Default wird eingefügt:
  https://tools.ietf.org/html/rfc2045#section-5.2

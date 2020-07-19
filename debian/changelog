@@ -1,10 +1,23 @@
+signing-milter (20200719) stable; urgency=medium
+
+  * Outlook-Problem gefixt
+  * Logging ohne Syslog implementiert
+  * bei einer ASCII-Mail den MIME-Version Header aus dem signierten Daten
+    übernehmen
+  * Headerumbrüche mit einem SPACE einrücken
+  * Der Milter beendet sich nicht mehr bei Mails mit meinem MIME-Version Header
+    aber ohne Content-* Header, ein Default wird eingefügt
+  * debian/ funktioniert mit Debian Stretch und Buster
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Sun, 19 Jul 2020 17:59:00 +0200
+
 signing-milter (2019012801+0~20190128072207.13~1.gbp56127b) stable; urgency=medium
 
   ** SNAPSHOT build @56127b131ea3dff7ee2a0f365c3da2871211c488 **
 
   [ andreasschulze ]
   * 'make strip' wieder aktiviert
-  * iAllow linking with OpenSSL
+  * Allow linking with OpenSSL
 
   [ Bauknecht ]
 
@@ -12,7 +25,7 @@ signing-milter (2019012801+0~20190128072207.13~1.gbp56127b) stable; urgency=medi
 
 signing-milter (2019012801) stable; urgency=medium
 
-  * Makefile: Nuztung von pkg-config wenn möglich
+  * Makefile: Nutzung von pkg-config wenn möglich
 
  -- Andreas Schulze <debian@andreasschulze.de>  Mon, 28 Jan 2019 07:37:46 +0100
 
