@@ -1,6 +1,6 @@
 .\"
 .\"signing-milter - signing-milter.8
-.\"Copyright (C) 2010-2018  Andreas Schulze
+.\"Copyright (C) 2010-2020  Andreas Schulze
 .\"
 .\"This program is free software; you can redistribute it and/or modify
 .\"it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 .\"  Andreas Schulze <signing-milter at andreasschulze.de>
 .\"
 .\"
-.TH signing-milter 8 "March, 2015"
+.TH signing-milter 8 "July, 2020"
 .\"
 .SH NAME
 signing-milter \- sign email via milter protocol
@@ -87,6 +87,12 @@ runs as. It must not have any rights for other.
 .I signing-milter
 creates two files containing unsigned and signed data. The files are named
 plain-QUEUEID and signed-QUEUEID. If omitted no files are written.
+.TP
+.B \-l all Logs to STDOUT
+Some environments work better if any logging is sent to STDOUT. This switch let
+.I signing-milter
+write any logmessage to STDOUT. Nothing will be send via SYSLOG, /dev/log is
+not needed.
 .TP
 .B \-m signingtable
 .I signing-milter

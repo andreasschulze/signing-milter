@@ -1,6 +1,6 @@
 /*
  * signing-milter - signing-milter.h
- * Copyright (C) 2010-2019  Andreas Schulze
+ * Copyright (C) 2010-2020  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +113,7 @@ struct ctxdata {
  */
 extern char* opt_clientgroup;
 extern int   opt_loglevel;
+extern int   opt_logdest;
 extern char* opt_group;
 extern char* opt_keepdir;
 extern char* opt_signingtable;
@@ -124,6 +125,13 @@ extern int   opt_addxheader;
 extern int   opt_signerfromheader;
 
 extern struct DICT dict_signingtable;
+
 extern struct DICT dict_modetable;
+
+/*
+ * where logging goes
+ */
+#define LOG_DEST_SYSLOG 1
+#define LOG_DEST_STDOUT 2
 
 #endif
