@@ -414,7 +414,6 @@ sfsistat callback_eom(SMFICTX* ctx) {
 
         logmsg(LOG_DEBUG, "%s: try discarding optional RFC 2046 epilogue",
                           ctxdata->queueid);
-        logmsg(LOG_DEBUG, "%s", ctxdata->data2sign);
 
         for (new_end = old_end;
              new_end > ctxdata->data2sign;
