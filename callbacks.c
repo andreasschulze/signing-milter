@@ -602,7 +602,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
     /*
      * etwas angeben ...
      */
-    logmsg(LOG_NOTICE, "%s: %ssigned with %s%s", ctxdata->queueid, ctxdata->mailflags & MF_SIGNMODE_OPAQUE ? "opaque" : "clear", ctxdata->pemfilename, ctxdata->chain != NULL ? " (+chain)" : "(ohne chain");
+    logmsg(LOG_NOTICE, "%s: %ssigned with %s%s", ctxdata->queueid, ctxdata->mailflags & MF_SIGNMODE_OPAQUE ? "opaque" : "clear", ctxdata->pemfilename, ctxdata->chain != NULL ? " (+chain)" : " (ohne chain)");
     logmsg(LOG_INFO, "%s: signing %ld byte took %d.%d sec", ctxdata->queueid, ctxdata->data2sign_len, duration.tv_sec, duration.tv_usec);
 
     /*
