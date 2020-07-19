@@ -309,6 +309,25 @@ sfsistat callback_eoh(SMFICTX* ctx) {
         return SMFIS_REJECT;
     }
 
+    /*
+     * only a MIME-Version header present, no Content-* header
+     * https://tools.ietf.org/html/rfc2045#section-5.2 mention an implicit default
+     */
+    if ( (ctxdata->headerchain == NULL) && ((ctxdata->mailflags & MF_TYPE_MIME) != 0) ) {
+
+        NODE* n;
+        char* headerf = "Content-Type";
+        char* headerv = "text/plain; charset=\"us-ascii\"";
+
+        logmsg(LOG_WARNING, "%s: malformed Content: 'MIME-Version' header but no 'Content-*' header found. Please read RFC 2045, Section 5.2. Adding '%s: %s'" , ctxdata->queueid, headerf, headerv);
+
+        if ((n = newnode(headerf, headerv, PHASE_PRE_SIGN)) == NULL) {
+            logmsg(LOG_ERR, "error: callback_eoh: alloc new node failed");
+            return SMFIS_TEMPFAIL;
+        }
+        appendnode(&(ctxdata->headerchain), n);
+    }
+
     dump_mailflags(ctxdata->mailflags);
     dump_pkcs7flags(ctxdata->pkcs7flags);
 
