@@ -33,7 +33,6 @@ char* opt_miltersocket = "inet6:30053@[::1]";
 int   opt_timeout      = 600;
 char* opt_user         = "signing-milter";
 int   opt_addxheader   = 0;
-int   opt_breakheader  = 1;
 int   opt_signerfromheader = 0;
 
 /* globale Variablen */
@@ -78,7 +77,7 @@ int main(int argc, char** argv) {
     while ((c = getopt(argc, argv, "bc:d:hfg:k:m:n:s:t:u:vx")) > 0) {
         switch (c) {
         case 'b': /* break contentheader */
-            opt_breakheader = (int) !opt_breakheader;
+            logmsg(LOG_INFO, "option -b is ignored for compatibily reasons, you may remove it safely");
             break;
         case 'c': /* clientgroup */
             opt_clientgroup = optarg;
@@ -342,7 +341,7 @@ int main(int argc, char** argv) {
 /* under Linux a sighandler must reenable itself */
 void sig_handler(int sig) {
 
-    logmsg(LOG_INFO, "%s: signal %i recieved", STR_PROGNAME, sig);
+    logmsg(LOG_INFO, "%s: signal %i received", STR_PROGNAME, sig);
     signal(sig, sig_handler);
 
     output_stats();

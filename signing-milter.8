@@ -1,6 +1,6 @@
 .\"
 .\"signing-milter - signing-milter.8
-.\"Copyright (C) 2010-2013  Andreas Schulze
+.\"Copyright (C) 2010-2015  Andreas Schulze
 .\"
 .\"This program is free software; you can redistribute it and/or modify
 .\"it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 .\"  Andreas Schulze <signing-milter at andreasschulze.de>
 .\"
 .\"
-.TH signing-milter 8 "March, 2013"
+.TH signing-milter 8 "March, 2015"
 .\"
 .SH NAME
 signing-milter \- sign email via milter protocol
@@ -69,7 +69,7 @@ If enabled,
 .I signing-milter
 uses also the value of a header named
 .B X-Signer
-to lookup the signeraddress. This is usefull when using VERP
+to lookup the signeraddress. This is useful when using VERP
 (Variable Envelope Return Path).
 .TP
 .B \-g group
@@ -108,6 +108,15 @@ If you put cert and key in a file named /path/to/foo-cert+key.pem then
 .I signing-milter
 also try to load /path/to/foo-chain.pem. If it exist it should contain
 intermediate and root certificates that will be included in the signature.
+
+NOTE:
+.br
+There is not special error signaled if /path/to/foo-chain.pem exist
+but is unreadable for the user
+.I
+signing-milter
+run as.
+When using chain certificates you should check the logs if it is really used.
 .TP
 .B \-n modetable
 .I signing-milter
@@ -167,13 +176,6 @@ Causes
 to add a header indicating the presence of this filter in the path of the
 message from injection to delivery. The productname, version and hostname
 are included in the headers contents.
-.TP
-.B \-b
-Causes
-.I signing-milter
-to not break headerlines after a ;
-Headerlines moved inside a mime-container while signing must not be longer then
-76 characters. This switch disables the autobreak before signing.
 .\"
 .SH SECURITY
 The
@@ -186,7 +188,7 @@ refuses to run with root privileges.
 .SH ACCOUNTS
 You may start signing-milter as root. In this case
 .I signing-milter
-will switch to user/group signing-milter or the username given as -u and -g.
+will switch to user/group signing-milter or the username given as \-u and \-g.
 You may also switch to a unprivileged user and then start signing-milter.
 .\"
 .SH LOCAL SOCKET
@@ -196,7 +198,7 @@ run with a local unixsocket it is important the socket is accessible by
 .I sendmail(8).
 In this case start
 .I signing-milter
-under root, set -u and -g (or leave them default) and set -c to a group
+under root, set \-u and \-g (or leave them default) and set \-c to a group
 other then root and signing-milter.
 .I signing-milter
 will adjust the sockets owner, group and file mode to allow proper access by
@@ -244,5 +246,5 @@ was written by Andreas Schulze. Portions of Code are inspired or copied from
 postfix and opendkim.
 .\"
 .SH COPYRIGHT
-Copyright (c) 2010-2012, Andreas Schulze. All rights reserved.
+Copyright (c) 2010-2015, Andreas Schulze. All rights reserved.
 .\" _END_

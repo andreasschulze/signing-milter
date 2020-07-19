@@ -1,6 +1,6 @@
 /*
  * signing-milter - callbacks.c
- * Copyright (C) 2010-2012  Andreas Schulze
+ * Copyright (C) 2010-2015  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -349,7 +349,7 @@ sfsistat callback_body(SMFICTX* ctx, unsigned char* bodyp, size_t len) {
     /*
      * wenn die Mail eine Multipart-Mime-Mail ist,
      * beginnt sie mit einer Preambel ( RFC 2046, 5.1.1 )
-     * diese Preambel endet mit der ersten Boundary ( ^-- ).
+     * diese Preambel endet mit der ersten Boundary ( ^-- ) und wird nicht in die Signatur einbezogen.
      */
     if ((ctxdata->first_bodychunk_seen == 0) && (ctxdata->mailflags & MF_TYPE_MULTIPART)) {
         /* erster Chunk */
@@ -382,9 +382,6 @@ sfsistat callback_eom(SMFICTX* ctx) {
     struct timeval start_time, end_time, duration;
     char*          keepdir;
 
-    unsigned char*  end;
-    size_t          length;
-
     logmsg(LOG_DEBUG, "EOM");
 
     if ((ctxdata = (CTXDATA*) smfi_getpriv(ctx)) == NULL) {
@@ -393,26 +390,17 @@ sfsistat callback_eom(SMFICTX* ctx) {
     }
 
     /*
-     * beim letzten Bodychunk werden alle CR und LF am Schluss
-     * abgeschitten und durch *EIN* \r\n ersetzt
-     *
-     * ... und das scheint der Kniff zu sein,
-     * der Outlook und Outlook Express gluecklich macht !
+     *  "echo | /usr/sbin/sendmail rcpt" erzeugt Nachrichten mit 0 Byte body
+     *  aber BIO_new_mem_buf mag 0 Byte gar nicht. Also spendieren wir einen Zeilenumbruch
      */
-    end = ctxdata->data2sign + ctxdata->data2sign_len - 1;
-    length = ctxdata->data2sign_len;
+    if (0 == ctxdata->data2sign_len) {
+        if ((append2buffer(&(ctxdata->data2sign), &(ctxdata->data2sign_len), "\r\n", 2)) != 0) {
+            logmsg(LOG_ERR, "%s: error: callback_eom: append2buffer failed", ctxdata->queueid);
+            return SMFIS_TEMPFAIL;
+        }
+    }
 
-    while (*end == '\r' || *end == '\n') {
-        end--;
-        length--;
-    }
-    if (length <= ctxdata->data2sign_len - 2) {
-        end++; *end = '\r'; length++;
-        end++; *end = '\n'; length++;
-    } else {
-        logmsg(LOG_ERR, "%s: error: callback_eom: cannot append \\r + \\n", ctxdata->queueid);
-    }
-    ctxdata->data2sign_len = length;
+    logmsg(LOG_DEBUG, "callback_eom: ctxdata->data2sign_len=%zu", ctxdata->data2sign_len);
 
     gettimeofday(&start_time, NULL);
 
@@ -508,7 +496,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
 
         logmsg(LOG_DEBUG, "%s: Header aus PKCS7: %s", ctxdata->queueid, headerline);
 
-	/* XXX: was ist, wenn eine 7bis Ascii Mail signiert wurde?
+	/* XXX: was ist, wenn eine 7bit ASCII Mail signiert wurde?
          *      dann fehlt doch der Mime-Version: 1.0 Header?
          */
         if (strncasecmp(headerline, "mime-version", 12) == 0) {
@@ -573,7 +561,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
     /*
      * etwas angeben ...
      */
-    logmsg(LOG_NOTICE, "%s: %ssigned with %s%s", ctxdata->queueid, ctxdata->mailflags & MF_SIGNMODE_OPAQUE ? "opaque" : "clear", ctxdata->pemfilename, ctxdata->chain != NULL ? " (+chain)" : "");
+    logmsg(LOG_NOTICE, "%s: %ssigned with %s%s", ctxdata->queueid, ctxdata->mailflags & MF_SIGNMODE_OPAQUE ? "opaque" : "clear", ctxdata->pemfilename, ctxdata->chain != NULL ? " (+chain)" : "(ohne chain");
     logmsg(LOG_INFO, "%s: signing %ld byte took %d.%d sec", ctxdata->queueid, ctxdata->data2sign_len, duration.tv_sec, duration.tv_usec);
 
     /*

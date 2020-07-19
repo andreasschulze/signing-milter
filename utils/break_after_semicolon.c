@@ -1,6 +1,6 @@
 /*
  * signing-milter - utils/break_after_semicolon.c
- * Copyright (C) 2010-2013  Andreas Schulze
+ * Copyright (C) 2010-2015  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +23,13 @@
 #include "break_after_semicolon.h"
 
 /*
- * Ersetzt in einem String das ";" gefolgt von einem beliebigen Zeichen durch "; \n \t"
+ * Ersetzt in einem String das ";" gefolgt von einem beliebigen Zeichen durch "; \r \n \t"
  * Annahme : nach einem ; kommt immer ein Leerzeichen. Dies ist jedoch durch einen Aufruf von hdrdup sichergestellt.
  *
  * Argument: ein mit malloc allokierter Speicherbereich mit einem nullterminierten String
  * Rückgabe: - im Fehlerfall:
  *             NULL
  *           - wenn string keine ; enthielt:
- *             der urspüngliche String
- *           - wenn der Schalter -b nicht aktiv ist:
  *             der urspüngliche String
  *           - wenn der String < 70 Zeichen ist:
  *             der urspüngliche String
@@ -55,14 +53,8 @@ char* break_after_semicolon(char* string) {
         return (string);
     }
 
-    if (opt_breakheader == 0) {
-        /* Funktion nicht aktiviert */
-        logmsg(LOG_INFO, "INFO: skip breaking ->%s<- (activate with -b)", string);
-        return (string);
-    }
-
-    /* pro semokolon ein zusätzliches Byte */
-    if ((new_string = malloc(strlen(string) + num_semicolon + 1)) == NULL) {
+    /* pro semokolon 2 zusätzliches Byte */
+    if ((new_string = malloc(strlen(string) + (num_semicolon*2) + 1)) == NULL) {
         logmsg(LOG_ERR, "FATAL: break_after_semicolon: malloc failed");
         return(NULL);
     }
@@ -75,6 +67,8 @@ char* break_after_semicolon(char* string) {
         if (*p_old != ';') {
             p_old++; p_new++;
         } else {
+            p_new++;
+            *p_new = '\r';
             p_new++;
             *p_new = '\n';
             p_new++;

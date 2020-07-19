@@ -1,3 +1,22 @@
+signing-milter (2015030801) stable; urgency=medium
+
+  * Schalter "-b" entfernt
+  * Headerzeilen immer mit \r\n umbrechen 
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Sun, 08 Mar 2015 22:19:36 +0100
+
+signing-milter (2015030601) stable; urgency=medium
+
+  * debian/control: Jessie kompatibel 
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Fri, 06 Mar 2015 23:43:36 +0100
+
+signing-milter (2013090401) stable; urgency=low
+
+  * debian/control: Wheezy kompatibel 
+
+ -- Andreas Schulze <debian@andreasschulze.de>  Wed, 04 Sep 2013 21:24:29 +0200
+
 signing-milter (2013031101) stable; urgency=low
 
   * break_after_semikolon: Zeilenumbrueche im Header nur mit \n statt \r\n 

@@ -1,6 +1,6 @@
 /*
  * signing-milter - utils/usage.c
- * Copyright (C) 2010,2011  Andreas Schulze
+ * Copyright (C) 2010,2015  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,8 +53,6 @@ void usage(void) {
     printf("                  default: %s\n", opt_user);
     printf("  -x              add an X-Header to every signed mail\n");
     printf("                  default: %s\n", opt_addxheader ? "on" : "off");
-    printf("  -b              break content-type header after ;\n");
-    printf("                  default: %s\n", opt_breakheader ? "on" : "off");
     printf("\n");
 }
 

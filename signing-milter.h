@@ -1,6 +1,6 @@
 /*
  * signing-milter - signing-milter.h
- * Copyright (C) 2010-2012  Andreas Schulze
+ * Copyright (C) 2010-2015  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
 
 #define STR_PROGNAME    "signing-milter"
 #ifdef NDEBUG
-#define STR_PROGVERSION "20130311"
+#define STR_PROGVERSION "20150308"
 #else
-#define STR_PROGVERSION "20130311-debug"
+#define STR_PROGVERSION "20150308-debug"
 #endif
 
 /*
@@ -121,7 +121,6 @@ extern char* opt_miltersocket;
 extern int   opt_timeout;
 extern char* opt_user;
 extern int   opt_addxheader;
-extern int   opt_breakheader;
 extern int   opt_signerfromheader;
 
 extern struct DICT dict_signingtable;

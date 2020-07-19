@@ -79,7 +79,7 @@ If enabled,
 uses also the value of a header named
 <B>X-Signer</B>
 
-to lookup the signeraddress. This is usefull when using VERP
+to lookup the signeraddress. This is useful when using VERP
 (Variable Envelope Return Path).
 <DT><B>-g group</B>
 
@@ -130,6 +130,18 @@ If you put cert and key in a file named /path/to/foo-cert+key.pem then
 
 also try to load /path/to/foo-chain.pem. If it exist it should contain
 intermediate and root certificates that will be included in the signature.
+
+<P>
+NOTE:
+
+<BR>
+There is not special error signaled if /path/to/foo-chain.pem exist
+but is unreadable for the user
+
+<I>signing-milter</I>
+run as.
+When using chain certificates you should check the logs if it is really used.
+
 <DT><B>-n modetable</B>
 
 <DD>
@@ -211,15 +223,6 @@ Causes
 to add a header indicating the presence of this filter in the path of the
 message from injection to delivery. The productname, version and hostname
 are included in the headers contents.
-<DT><B>-b</B>
-
-<DD>
-Causes
-<I>signing-milter</I>
-
-to not break headerlines after a ;
-Headerlines moved inside a mime-container while signing must not be longer then
-76 characters. This switch disables the autobreak before signing.
 
 </DL>
 <A NAME="lbAF">&nbsp;</A>
@@ -332,7 +335,7 @@ postfix and opendkim.
 <A NAME="lbAO">&nbsp;</A>
 <H2>COPYRIGHT</H2>
 
-Copyright (c) 2010-2012, Andreas Schulze. All rights reserved.
+Copyright (c) 2010-2015, Andreas Schulze. All rights reserved.
 
 <P>
 
@@ -356,6 +359,6 @@ Copyright (c) 2010-2012, Andreas Schulze. All rights reserved.
 </DL>
 <HR>
 This document was created by man2html, using the manual pages.<BR>
-Time: 00:00:00 GMT, March 11, 2013
+Time: 00:00:00 GMT, March 6, 2015
 </BODY>
 </HTML>
