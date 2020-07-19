@@ -1,3 +1,19 @@
+15. Oktober 2018
+ Beim Update im März 2015 hat sich eine Unschärfe eingeschlichen.
+ Header der ursprünglichen E-Mail werden nach einem ; umgebrochen
+ und wandern praktisch als MIME-Header in den Mailbody. Dort sind
+ Zeilenumbrüche mit \r\r definiert.
+
+ Nach der Signatur werden Daten in den eigentlichen Mailheader
+ zurückgeschrieben. *Dort* sind Headerzeilen jedoch nur mit \n
+ umzubrechen.
+
+ E-Mail ist total einfach - geradezu "Simple" :-/
+
+ Diesen Fehler hat Stefan Meinecke vor über einem Jahr schon gefunden
+ und in praktisch identischer Art gefixt:
+ https://github.com/smeinecke/signing-milter/commit/eed029cd507f0896129e7b6dc1eaf807eed12e04
+
 31. Juli 2012
  Der Milter hat bisher keine Zwischen- oder Rootzertifikate in die Signatur
  aufgenommen. Dies wird nun unterstützt. Dazu müssen die Signaturdaten

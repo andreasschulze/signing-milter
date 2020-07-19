@@ -1,6 +1,6 @@
 /*
  * signing-milter - callbacks.c
- * Copyright (C) 2010-2015  Andreas Schulze
+ * Copyright (C) 2010-2018  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 struct smfiDesc callbacks = {
     STR_PROGNAME,           /* filter name */
     SMFI_VERSION,           /* version code -- do not change */
-    SMFIF_ADDHDRS | 
-    SMFIF_CHGHDRS | 
+    SMFIF_ADDHDRS |
+    SMFIF_CHGHDRS |
     SMFIF_CHGBODY,          /* filter actions */
     NULL,                   /* connection info filter */
     NULL,                   /* SMTP HELO command filter */
@@ -207,13 +207,13 @@ sfsistat callback_header(SMFICTX* ctx, char* headerf, char* headerv) {
         logmsg(LOG_DEBUG, "callback_header: Mime-Mail erkannt");
         ctxdata->mailflags |= MF_TYPE_MIME;
     }
- 
+
     /*
      * RFC 2045 definiert
      * Content-Type, Content-Transfer-Encoding, Content-ID und Content-Description
      * Abschnitt 9 legt fest, dass alle Erweiterungen mit content- beginnen werden
      */
-    if (strncasecmp(headerf, "content-", 8) == 0) { 
+    if (strncasecmp(headerf, "content-", 8) == 0) {
 
         /*
          * schon signierte Nachrichten brauchen nicht weiter
@@ -222,7 +222,7 @@ sfsistat callback_header(SMFICTX* ctx, char* headerf, char* headerv) {
          *       ist sicher noch nocht perfekt
          */
         if (is_already_signed(headerf, headerv)) {
-            logmsg(LOG_NOTICE, "mail seemes allready signed.");
+            logmsg(LOG_NOTICE, "mail seemes already signed.");
             return SMFIS_ACCEPT;
         }
 
@@ -231,7 +231,7 @@ sfsistat callback_header(SMFICTX* ctx, char* headerf, char* headerv) {
             ctxdata->mailflags |= MF_TYPE_MULTIPART;
         }
 
-        if ((n = newnode(headerf, headerv)) == NULL) {
+        if ((n = newnode(headerf, headerv, PHASE_PRE_SIGN)) == NULL) {
             logmsg(LOG_ERR, "error: callback_header: alloc new node failed");
             return SMFIS_TEMPFAIL;
         }
@@ -455,9 +455,9 @@ sfsistat callback_eom(SMFICTX* ctx) {
         logmsg(LOG_ERR, "%s: error: callback_eom: delete_marked_headers failed", ctxdata->queueid);
         return SMFIS_TEMPFAIL;
     }
- 
+
     /*
-     * wenn vorhanden: HEADERNAME_SIGNER loeschen 
+     * wenn vorhanden: HEADERNAME_SIGNER loeschen
      */
     if (ctxdata->mailflags & MF_SIGNER_FROM_HEADER) {
         if (smfi_chgheader(ctx, HEADERNAME_SIGNER, 0, NULL) != MI_SUCCESS) {
@@ -517,7 +517,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
             return SMFIS_TEMPFAIL;
         }
 
-        if ((headerv = break_after_semicolon(headerv)) == NULL) {
+        if ((headerv = break_after_semicolon(headerv, PHASE_POST_SIGN)) == NULL) {
             logmsg(LOG_ERR, "%s: error: callback_eom: break_after_semicolon failed", ctxdata->queueid);
             if (headerline)
                 free(headerline);
@@ -578,7 +578,7 @@ sfsistat callback_eom(SMFICTX* ctx) {
             snprintf(xhdr, MAXHEADERLEN, "%s %s on %s", STR_PROGNAME, STR_PROGVERSION, hostname);
 
             if (smfi_addheader(ctx, HEADERNAME_XHEADER, xhdr) != MI_SUCCESS)
-                logmsg(LOG_WARNING, "%s: warning: callback_eom: adding X-Header failed, continue", ctxdata->queueid); 
+                logmsg(LOG_WARNING, "%s: warning: callback_eom: adding X-Header failed, continue", ctxdata->queueid);
         }
     }
 

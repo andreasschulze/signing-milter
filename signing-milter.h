@@ -1,6 +1,6 @@
 /*
  * signing-milter - signing-milter.h
- * Copyright (C) 2010-2015  Andreas Schulze
+ * Copyright (C) 2010-2019  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
 
 #define STR_PROGNAME    "signing-milter"
 #ifdef NDEBUG
-#define STR_PROGVERSION "20150308"
+#define STR_PROGVERSION "20190125"
 #else
-#define STR_PROGVERSION "20150308-debug"
+#define STR_PROGVERSION "20190125-debug"
 #endif
 
 /*
@@ -41,7 +41,7 @@
 
 /*
  * Name of the header used as signeraddress
- * if opt_signerfromheader is enabled 
+ * if opt_signerfromheader is enabled
  */
 #define HEADERNAME_SIGNER "X-Signer"
 

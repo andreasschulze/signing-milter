@@ -1,6 +1,6 @@
 /*
  * signing-milter - main.c
- * Copyright (C) 2010,2011  Andreas Schulze
+ * Copyright (C) 2010-2018  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,13 +265,13 @@ int main(int argc, char** argv) {
     if (setuid(uid) != 0) {
         logmsg(LOG_ERR, "setuid(%i) failed: %s", pw->pw_uid, strerror(errno));
         exit(EX_SOFTWARE);
-    } 
+    }
 
     /* aktuelle uid/gid pruefen und loggen */
     uid = getuid();
     gid = getgid();
     if (uid == 0 || gid == 0) {
-        logmsg(LOG_ERR, "too much priveleges, %s will not start under root", STR_PROGNAME);
+        logmsg(LOG_ERR, "too much privileges, %s will not start under root", STR_PROGNAME);
         exit(EX_DATAERR);
     }
     logmsg(LOG_INFO, "running as uid: %i, gid: %i", (int) uid, (int) gid);
