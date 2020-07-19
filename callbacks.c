@@ -309,26 +309,6 @@ sfsistat callback_eoh(SMFICTX* ctx) {
         return SMFIS_REJECT;
     }
 
-    /*
-     * MIME-Version header present, but no content-*
-     * adding a default
-     * https://tools.ietf.org/html/rfc2045#section-5.2
-     */
-    if ( (ctxdata->headerchain == NULL) && ((ctxdata->mailflags & MF_TYPE_MIME) != 0) ) {
-
-        NODE* n;
-
-        logmsg(LOG_WARNING, "%s: callback_eoh: invalid content: 'MIME-Version'"
-                             "header but no 'Content-*' header found. Adding a"
-                             "sensible default", ctxdata->queueid);
-        if ((n = newnode("Content-Type", "text/plain; charset=us-ascii", PHASE_PRE_SIGN)) == NULL) {
-            logmsg(LOG_ERR, "error: callback_eom: alloc new node failed");
-            return SMFIS_TEMPFAIL;
-        }
-        appendnode(&(ctxdata->headerchain), n);
-    }
-
-
     dump_mailflags(ctxdata->mailflags);
     dump_pkcs7flags(ctxdata->pkcs7flags);
 
