@@ -1,6 +1,6 @@
 .\"
 .\"signing-milter - signing-milter.8
-.\"Copyright (C) 2010-2020  Andreas Schulze
+.\"Copyright (C) 2010-2021  Andreas Schulze
 .\"
 .\"This program is free software; you can redistribute it and/or modify
 .\"it under the terms of the GNU General Public License as published by
@@ -220,8 +220,9 @@ logged.
 .SH STARTUP AND LOGGING
 .I signing-milter
 is designed to run by a supervisor like daemontools or runit. It does not fork
-as daemon in background.  So all logging goes to syslog using facility LOG_MAIL.
-All messages except priority LOG_NOTICE and LOG_INFO are also sent to stdout.
+as daemon in background. Unless option \-l is given, all logging goes to syslog
+using facility LOG_MAIL. All messages except priority LOG_NOTICE and LOG_INFO
+are also sent to stdout.
 .\"
 .SH BUGS
 The private signing keys must not be protected by password.
