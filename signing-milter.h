@@ -1,6 +1,6 @@
 /*
  * signing-milter - signing-milter.h
- * Copyright (C) 2010-2020  Andreas Schulze
+ * Copyright (C) 2010-2021  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,12 @@
  * if opt_signerfromheader is enabled
  */
 #define HEADERNAME_SIGNER "X-Signer"
+
+/*
+ * Name of the header used to signal the
+ * desire to not sign a particular message
+ */
+#define HEADERNAME_SKIP_SIGNING "X-Skip-Signing"
 
 /* buffer for caching one header */
 #define MAXHEADERLEN 4096
@@ -105,6 +111,7 @@ struct ctxdata {
 #define MF_TYPE_MULTIPART              (1<<1)
 #define MF_SIGNMODE_OPAQUE             (1<<2)
 #define MF_SIGNER_FROM_HEADER          (1<<3)
+#define MF_SKIP_SIGNING                (1<<4)
 
 /*
  * globale Variablen
