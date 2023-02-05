@@ -1,6 +1,6 @@
 #
 #  signing-milter - signing-milter.spec
-#  Copyright (C) 2010-2020  Andreas Schulze
+#  Copyright (C) 2010-2021  Andreas Schulze
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #
 
 Name:		signing-milter
-Version:	20200719
+Version:	20210822
 %define		debian_version %{version}01
 Release:	1.1
 Summary:	Sign email via milter protocol

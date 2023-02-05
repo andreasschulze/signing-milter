@@ -35,6 +35,10 @@ uses the
 interface, originally distributed as part of version 8.11 of
 .B sendmail(8),
 to provide signing service for mail transiting a milter-aware MTA.
+Messages are signed if the RFC5321.MailFrom is found in a signing-table,
+certs are present and usable and a header
+.I X-Skip-Signing
+does not exist.
 .\"
 .SH OPTIONS
 .TP
@@ -253,5 +257,5 @@ was written by Andreas Schulze. Portions of Code are inspired or copied from
 postfix and opendkim.
 .\"
 .SH COPYRIGHT
-Copyright (c) 2010-2015, Andreas Schulze. All rights reserved.
+Copyright (c) 2010-2021, Andreas Schulze. All rights reserved.
 .\" _END_

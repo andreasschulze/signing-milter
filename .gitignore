@@ -2,6 +2,8 @@ config.h
 *.o
 */*.a
 signing-milter
+signingtable
+signingtable.cdb
 
 demoCA
 *.pem
