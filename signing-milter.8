@@ -59,6 +59,10 @@ to be read/writeable by group
 The group must be any group other then root and the group
 .I signing-milter
 runs as. The parameter is required unless using an TCP socket.
+Specify the invalid groupname
+.B
+:relax
+to set the socket's group to root and mode to 0666.
 .TP
 .B \-d loglevel
 Set the loglevel. The default level 3 logs all errors. Valid values are
