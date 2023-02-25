@@ -82,6 +82,24 @@ sfsistat callback_envfrom(SMFICTX* ctx, char** argv) {
     warn_if_dict_changed(&dict_signingtable);
 
     pemfilename = dict_lookup(&dict_signingtable, argv[0]);
+
+    /*
+     * MagicPath
+     */
+    char longpemfilename[1024];
+extern char* opt_magicpath;
+if (opt_magicpath) {
+    longpemfilename[0] = 0;
+    strcpy(longpemfilename, opt_magicpath);
+    strcat(longpemfilename, argv[0]);
+    strcat(longpemfilename, ".pem");
+    pemfilename = longpemfilename;
+    logmsg(LOG_INFO, "MagicPath filename '%s'", pemfilename);
+}
+    /*
+     * end-of-MagicPath
+     */
+
     if (pemfilename == NULL || *pemfilename == '\0') {
         /*
          * Absender nicht in der Signingtable gefunden.
