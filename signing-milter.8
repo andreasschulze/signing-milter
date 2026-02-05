@@ -78,7 +78,12 @@ If enabled,
 uses also the value of a header named
 .B X-Signer
 to lookup the signeraddress. This is useful when using VERP
-(Variable Envelope Return Path).
+(Variable Envelope Return Path). This switch also enable an option to add a
+message header named
+.B X-Skip-Signing
+(the value doesn't matter). If present,
+.I signing-milter
+will skip signing.
 .TP
 .B \-g group
 Set the group
