@@ -1,3 +1,9 @@
+20230225
+ Adding magic path option '-M' to provide a magic path
+ under which all key files are stored within files
+ named by sender-address followed by '.pem', i.e.
+ lonesome_cowboy@anywhere.de.pem
+
 202302xx
  Fix .f https://github.com/andreasschulze/signing-milter/issues/3
  socketmode may be relaxed with '-c :relax'

@@ -35,6 +35,13 @@ int   opt_timeout      = 600;
 char* opt_user         = "signing-milter";
 int   opt_addxheader   = 0;
 int   opt_signerfromheader = 0;
+/*
+ * MagicPath
+ */
+char* opt_magicpath    = NULL;
+/*
+ * end-of-MagicPath
+ */
 
 /* globale Variablen */
 struct DICT dict_signingtable = {
@@ -77,7 +84,8 @@ int main(int argc, char** argv) {
      */
     uid = gid = client_gid = root_gid = 0;
 
-    while ((c = getopt(argc, argv, "bc:d:hfg:k:lm:n:s:t:u:vx")) > 0) {
+    while ((c = getopt(argc, argv, "bc:d:hfg:k:lm:n:s:t:u:vxM:")) > 0) {
+
         switch (c) {
         case 'b': /* break contentheader */
             logmsg(LOG_INFO, "option -b is ignored for compatibily reasons, you may remove it safely");
@@ -168,6 +176,16 @@ int main(int argc, char** argv) {
         case 'x': /* add X-Header */
             opt_addxheader = (int) !opt_addxheader;
             break;
+/*
+ * MagicPath
+ */
+        case 'M': /* magic-path */
+            opt_magicpath = optarg;
+            logmsg(LOG_ERR, "magic path (%s) activated", opt_magicpath);
+            break;
+/*
+ * end-of-MagicPath
+ */
         default:
             usage();
             exit(EX_USAGE);
