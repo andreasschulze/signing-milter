@@ -1,3 +1,6 @@
+20260416
+ User-ID und Gruppe von signing-milter auf nobody/nogroup geändert
+
 202302xx
  Fix .f https://github.com/andreasschulze/signing-milter/issues/3
  socketmode may be relaxed with '-c :relax'

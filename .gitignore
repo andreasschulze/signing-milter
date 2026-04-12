@@ -7,3 +7,5 @@ signingtable.cdb
 
 demoCA
 *.pem
+
+Dockerfile

@@ -19,7 +19,7 @@
 .\"  Andreas Schulze <signing-milter at andreasschulze.de>
 .\"
 .\"
-.TH signing-milter 8 "February, 2026"
+.TH signing-milter 8 "April, 2026"
 .\"
 .SH NAME
 signing-milter \- sign email via milter protocol
@@ -88,7 +88,7 @@ will skip signing.
 .B \-g group
 Set the group
 .I signing-milter
-will run as if started as root. If omitted the groupname signing-milter is used.
+will run as if started as root. If omitted the groupname nogroup is used.
 .TP
 .B \-k directory
 for debugging purposes
@@ -186,7 +186,7 @@ will wait for an MTA communication (read or write) before timing out.
 .B \-u user
 Set the user
 .I signing-milter
-will run as if started under root. If omitted the username signing-milter is
+will run as if started under root. If omitted the username nobody is
 used.
 .TP
 .B \-x

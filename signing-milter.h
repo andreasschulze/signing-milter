@@ -1,6 +1,6 @@
 /*
  * signing-milter - signing-milter.h
- * Copyright (C) 2010-2021  Andreas Schulze
+ * Copyright (C) 2010-2026  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@
 
 #define STR_PROGNAME    "signing-milter"
 #ifdef NDEBUG
-#define STR_PROGVERSION "20210822"
+#define STR_PROGVERSION "20260412"
 #else
-#define STR_PROGVERSION "20210822-debug"
+#define STR_PROGVERSION "20260412-debug"
 #endif
 
 /*

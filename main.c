@@ -1,6 +1,6 @@
 /*
  * signing-milter - main.c
- * Copyright (C) 2010-2023  Andreas Schulze
+ * Copyright (C) 2010-2026  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
 char* opt_clientgroup  = NULL;
 int   opt_loglevel     = LOG_NOTICE;
 int   opt_logdest      = LOG_DEST_SYSLOG;
-char* opt_group        = "signing-milter";
+char* opt_group        = "nogroup";
 char* opt_keepdir      = NULL;
 char* opt_signingtable = "/etc/signing-milter/signingtable.cdb";
 char* opt_modetable    = NULL;
 char* opt_miltersocket = "inet6:30053@[::1]";
 int   opt_timeout      = 600;
-char* opt_user         = "signing-milter";
+char* opt_user         = "nobody";
 int   opt_addxheader   = 0;
 int   opt_signerfromheader = 0;
 
