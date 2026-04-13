@@ -151,7 +151,11 @@ const char* dict_lookup(DICT* dict, const char* key) {
     /*
      * Grossbuchstaben umwandeln
      */
-    key = lowercase(dict->buffer);
+    if (opt_ignorecase) {
+        key = lowercase(dict->buffer);
+    } else {
+        key = dict->buffer;
+    }
 
     /*
      * See if this CDB file was written with one null byte appended to key

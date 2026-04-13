@@ -27,6 +27,7 @@ char* opt_clientgroup  = NULL;
 int   opt_loglevel     = LOG_NOTICE;
 int   opt_logdest      = LOG_DEST_SYSLOG;
 char* opt_group        = "nogroup";
+int   opt_ignorecase   = 0;
 char* opt_keepdir      = NULL;
 char* opt_signingtable = "/etc/signing-milter/signingtable.cdb";
 char* opt_modetable    = NULL;
@@ -77,7 +78,7 @@ int main(int argc, char** argv) {
      */
     uid = gid = client_gid = root_gid = 0;
 
-    while ((c = getopt(argc, argv, "bc:d:hfg:k:lm:n:s:t:u:vx")) > 0) {
+    while ((c = getopt(argc, argv, "bc:d:hfg:ik:lm:n:s:t:u:vx")) > 0) {
         switch (c) {
         case 'b': /* break contentheader */
             logmsg(LOG_INFO, "option -b is ignored for compatibily reasons, you may remove it safely");
@@ -113,6 +114,9 @@ int main(int argc, char** argv) {
                 printf("unknown group: getgrnam(%s) failed", opt_group);
                 exit(EX_DATAERR);
             }
+            break;
+        case 'i': /* ignore case in signing- and modetable */
+            opt_ignorecase = 1;
             break;
         case 'k': /* keepdir */
             opt_keepdir = optarg;

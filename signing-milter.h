@@ -122,6 +122,7 @@ extern char* opt_clientgroup;
 extern int   opt_loglevel;
 extern int   opt_logdest;
 extern char* opt_group;
+extern int   opt_ignorecase;
 extern char* opt_keepdir;
 extern char* opt_signingtable;
 extern char* opt_modetable;
