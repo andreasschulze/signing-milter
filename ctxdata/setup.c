@@ -1,6 +1,6 @@
 /*
  * signing-milter - ctxdata/setup.c
- * Copyright (C) 2010-2012  Andreas Schulze
+ * Copyright (C) 2010-2026  Andreas Schulze
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,12 @@ int ctxdata_setup(CTXDATA* ctxdata, const char* pemfilename) {
 
         len = strlen(ctxdata->pemfilename); /* assume: strlen does not return an error */
 
-        if ((chainfilename = malloc(len)) == NULL) {
+        /* korrekterweise fehlt bei malloc(len) der Platz fuer das abschliessende \0.
+         * Das stoert aber nicht, weil spaeter cert+key.pem durch chain.pem ersetzt wird
+         * und das ist (zufaellig) kuerzer. Damit stoehrt der fehlende Platz fuer \0 nicht.
+         * Da ich hier aber schon soviel Doku schreibe, wird's gleich noch mit len+1 gefixt
+         */
+        if ((chainfilename = malloc(len + 1)) == NULL) {
             logmsg(LOG_ERR, "error: ctxdata_setup: malloc for chainfilename failed: %m", strerror(errno));
             return(6);
         }
