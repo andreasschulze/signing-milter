@@ -99,8 +99,6 @@ sfsistat callback_envfrom(SMFICTX* ctx, char** argv) {
      * Private Datenstruktur vorbereiten
      */
     if ((ctxdata = (CTXDATA*) smfi_getpriv(ctx)) != NULL) {
-        /* eigentlich LOG_INFO / unbedeutend, aber ich möchte das mal im Log sehen */
-        logmsg(LOG_WARNING, "callback_envfrom: REUSED CONNECTION !!!!");
         ctxdata_cleanup(ctxdata);
     } else {
         if ((ctxdata = ctxdata_create()) == NULL)
